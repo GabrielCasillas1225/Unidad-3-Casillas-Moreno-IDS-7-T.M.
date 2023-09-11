@@ -3,32 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Act 5</title>
+    <title>Act7 </title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 </head>
 <body>
     <div id="app">
-        <h1>Suma de dos números con v-model</h1>
-        <h2>Casillas Moreno Luis Gabriel</h2>
-        <input type="number" v-model="num1" placeholder="Número 1">
-        <input type="number" v-model="num2" placeholder="Número 2">
-        <p>Resultado: {{ resultado }}</p>
-        <button @click="sumar">Sumar</button>
+        <form @submit.prevent="agregarPersona">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" v-model="nuevaPersona.nombre">
+
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" v-model="nuevaPersona.apellidos">
+
+            <button type="submit">Añadir</button>
+        </form>
+
+        <div v-if="personas.length > 0">
+            <h2>Personas:</h2>
+            <ul>
+                <li v-for="(persona, index) in personas" :key="index">
+                    <p>Nombre: {{ persona.nombre }} : {{ persona.apellidos }}</p>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
     <script>
         new Vue({
             el: '#app',
             data: {
-                num1: 0,
-                num2: 0,
-                resultado: 0, 
+                nuevaPersona: {
+                    nombre: '',
+                    apellidos: ''
+                },
+                personas: []
             },
             methods: {
-                sumar: function () {
-                    this.resultado = parseInt(this.num1) + parseInt(this.num2);
-                },
-            },
+                agregarPersona() {
+                    this.personas.push({ ...this.nuevaPersona });
+                    this.nuevaPersona.nombre = '';
+                    this.nuevaPersona.apellidos = '';
+                }
+            }
         });
     </script>
 </body>
