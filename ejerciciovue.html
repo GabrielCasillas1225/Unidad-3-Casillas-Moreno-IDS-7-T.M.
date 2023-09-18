@@ -1,51 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Act7 </title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-</head>
-<body>
-    <div id="app">
-        <form @submit.prevent="agregarPersona">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" v-model="nuevaPersona.nombre">
+[
+    { "username": "usuario1", "password": "contraseña1" },
+    { "username": "usuario2", "password": "contraseña2" }
+]
 
-            <label for="apellidos">Apellidos:</label>
-            <input type="text" id="apellidos" v-model="nuevaPersona.apellidos">
 
-            <button type="submit">Añadir</button>
-        </form>
 
-        <div v-if="personas.length > 0">
-            <h2>Personas:</h2>
-            <ul>
-                <li v-for="(persona, index) in personas" :key="index">
-                    <p>Nombre: {{ persona.nombre }} : {{ persona.apellidos }}</p>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                nuevaPersona: {
-                    nombre: '',
-                    apellidos: ''
-                },
-                personas: []
-            },
-            methods: {
-                agregarPersona() {
-                    this.personas.push({ ...this.nuevaPersona });
-                    this.nuevaPersona.nombre = '';
-                    this.nuevaPersona.apellidos = '';
-                }
-            }
-        });
-    </script>
-</body>
-</html>
