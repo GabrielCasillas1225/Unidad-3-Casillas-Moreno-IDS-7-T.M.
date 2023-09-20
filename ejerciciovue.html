@@ -1,76 +1,117 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
-
+    <title>Act 12</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 </head>
 <body>
-
     <div id="app">
-        <h1>Login</h1>
-        <form @submit.prevent="login">
-        <div>
-            <label for="username">Usuario:</label>
-            <input type="text" id="username" v-model="formData.username" required>
-        </div>
-        <div>
+
+        <h1>Casillas Moreno Luis Gabriel</h1>
+        <h2>Login</h2>
+        <form @submit.prevent="login" v-if="!loggedInUser">
+            <label for="email">Email:</label>
+            <input type="email" id="email" v-model="email" required>
+            <br>
             <label for="password">Contraseña:</label>
-            <input type="password" id="password" v-model="formData.password" required>
-        </div>
-        <div>
+            <input type="password" id="password" v-model="password" required>
+            <br>
             <button type="submit">Iniciar sesión</button>
-        </div>
+            <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
         </form>
-        <p v-if="loginError" class="error">Vuelva a ingresar los datos porfavor</p>
-        <p v-if="loggedIn" class="success">Sesion iniciado exitosamente</p>
+        
+        <div v-else>
+            <p>Bienvenido, {{ loggedInUser.name }} {{ loggedInUser.lastname }}</p>
+            <button @click="logout">Cerrar sesión</button>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Avatar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in users" :key="user.email">
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.lastname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role_id }}</td>
+                        <td><img :src="user.avatar" alt="Avatar"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 
+
     <script>
-        new Vue({
+    const app = new Vue({
         el: '#app',
         data: {
-            formData: {
-            username: '',
-            password: '',
-            },
-            users: [],
-            loginError: false,
-            loggedIn: false,
+        email: '',
+        password: '',
+        users: [],
+        loggedInUser: null,
+        errorMessage: ''
         },
-        mounted() {
-            
+        methods: {
+        login() {
+        //  Se encarga de buscar el usuario con el email que se le indico
+            const user = this.users.find(user => user.email === this.email);
+
+            if (user && user.password === this.password) {
+            this.loggedInUser = user;
+            this.errorMessage = '';
+            } else {
+            this.errorMessage = 'Datos incorrectos, porfavor intentelo de nuevo ';
+            }
+        },
+        logout() {
+            this.loggedInUser = null;
+            this.email = '';
+            this.password = '';
+        },
+        fetchUsers() {
+        // hace una solicitud al get para atraer los datos del json
             fetch('users.json')
             .then(response => response.json())
             .then(data => {
                 this.users = data;
+            })
+            .catch(error => {
+                console.error('Error al obtener usuarios:', error);
             });
+        }
         },
-        methods: {
-            login() {
-            const { username, password } = this.formData;
-            
-            
-            const user = this.users.find(user => user.username === username && user.password === password);
-            
-            if (user) {
-                
-                this.loggedIn = true;
-                this.loginError = false;
-            } else {
-                
-                this.loggedIn = false;
-                this.loginError = true;
-            }
-            },
-        },
-        });
-        </script>
-        
+        created() {
+        // Carga usuarios
+        this.fetchUsers();
+        }
+    });
 
 
+    </script>
+
+    <style>
+
+        th{
+            padding: 16px;
+        }
+
+        td{
+            padding: 16px;
+        }
+
+        h2{
+            color: dodgerblue;
+        }
+
+    </style>
 </body>
 </html>
