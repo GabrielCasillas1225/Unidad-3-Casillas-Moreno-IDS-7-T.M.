@@ -1,117 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Act 12</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-</head>
-<body>
-    <div id="app">
+[
+    {
+        "name": "Luis",
+        "lastname": "Casillas",
+        "email": "gabriel1702@gmail.com",
+        "password": "123",
+        "role_id": 1,
+        "avatar": ""
+    },
+    {
+        "name": "Alberto",
+        "lastname": "Moreno",
+        "email": "alberto1714@gmail.com",
+        "password": "456",
+        "role_id": 2,
+        "avatar": ""
+    },
 
-        <h1>Casillas Moreno Luis Gabriel</h1>
-        <h2>Login</h2>
-        <form @submit.prevent="login" v-if="!loggedInUser">
-            <label for="email">Email:</label>
-            <input type="email" id="email" v-model="email" required>
-            <br>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" v-model="password" required>
-            <br>
-            <button type="submit">Iniciar sesión</button>
-            <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-        </form>
-        
-        <div v-else>
-            <p>Bienvenido, {{ loggedInUser.name }} {{ loggedInUser.lastname }}</p>
-            <button @click="logout">Cerrar sesión</button>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Email</th>
-                        <th>Rol</th>
-                        <th>Avatar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in users" :key="user.email">
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.lastname }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.role_id }}</td>
-                        <td><img :src="user.avatar" alt="Avatar"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    {
+        "name": "Jesus",
+        "lastname": "Meza",
+        "email": "meza@gmail.com",
+        "password": "789",
+        "role_id": 3,
+        "avatar": ""
+    }
 
-
-
-    <script>
-    const app = new Vue({
-        el: '#app',
-        data: {
-        email: '',
-        password: '',
-        users: [],
-        loggedInUser: null,
-        errorMessage: ''
-        },
-        methods: {
-        login() {
-        //  Se encarga de buscar el usuario con el email que se le indico
-            const user = this.users.find(user => user.email === this.email);
-
-            if (user && user.password === this.password) {
-            this.loggedInUser = user;
-            this.errorMessage = '';
-            } else {
-            this.errorMessage = 'Datos incorrectos, porfavor intentelo de nuevo ';
-            }
-        },
-        logout() {
-            this.loggedInUser = null;
-            this.email = '';
-            this.password = '';
-        },
-        fetchUsers() {
-        // hace una solicitud al get para atraer los datos del json
-            fetch('users.json')
-            .then(response => response.json())
-            .then(data => {
-                this.users = data;
-            })
-            .catch(error => {
-                console.error('Error al obtener usuarios:', error);
-            });
-        }
-        },
-        created() {
-        // Carga usuarios
-        this.fetchUsers();
-        }
-    });
-
-
-    </script>
-
-    <style>
-
-        th{
-            padding: 16px;
-        }
-
-        td{
-            padding: 16px;
-        }
-
-        h2{
-            color: dodgerblue;
-        }
-
-    </style>
-</body>
-</html>
+    
+]
