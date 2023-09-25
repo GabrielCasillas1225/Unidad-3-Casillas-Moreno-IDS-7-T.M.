@@ -1,29 +1,226 @@
-[
-    {
-        "name": "Luis",
-        "lastname": "Casillas",
-        "email": "gabriel1702@gmail.com",
-        "password": "123",
-        "role_id": 1,
-        "avatar": ""
-    },
-    {
-        "name": "Alberto",
-        "lastname": "Moreno",
-        "email": "alberto1714@gmail.com",
-        "password": "456",
-        "role_id": 2,
-        "avatar": ""
-    },
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Act 13</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div v-if="!isLoggedIn">
+            <h1>Iniciar Sesión</h1>
+            <form @submit.prevent="login">
+                <label for="email">Email:</label>
+                <input type="email" id="email" v-model="email" required>
+                <br>
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" v-model="password" required>
+                <br>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+        </div>
 
-    {
-        "name": "Jesus",
-        "lastname": "Meza",
-        "email": "meza@gmail.com",
-        "password": "789",
-        "role_id": 3,
-        "avatar": ""
-    }
+        <div v-if="isLoggedIn">
+            <h1>Bienvenido</h1>
+            <button @click="mostrarUsuarios">Mostrar Usuarios</button>
+            <button @click="mostrarFormularioAgregar">Agregar Usuario</button>
+            <table v-if="mostrar" border="1">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Website</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in usuarios" :key="user.id">
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.website }}</td>
+                        <td>    
+                            <button @click="editarUsuario(user)">Editar</button>
+                            <button @click="borrarUsuario(user)">Borrar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Editar usuarios formulario -->
+            <div v-if="mostrarFormularioEditar">
+                <h2>Editar Usuario</h2>
+                <form @submit.prevent="guardarEdicion">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" v-model="usuarioEditado.name" required>
+                    <br>
+                    <label for="usuario">Usuario:</label>
+                    <input type="text" id="usuario" v-model="usuarioEditado.username" required>
+                    <br>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" v-model="usuarioEditado.email" required>
+                    <br>
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" v-model="usuarioEditado.phone" required>
+                    <br>
+                    <label for="website">Website:</label>
+                    <input type="text" id="website" v-model="usuarioEditado.website" required>
+                    <br>
+                    <button type="submit">Guardar Cambios</button>
+                </form>
+            </div>
+
+
+
+            <!-- Agregar usuarios formulario-->
+            <div v-if="mostrarFormulario">
+                <h2>Agregar Nuevo Usuario</h2>
+                <form @submit.prevent="agregarUsuario">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" v-model="nuevoUsuario.name" required>
+                    <br>
+                    <label for="usuario">Usuario:</label>
+                    <input type="text" id="usuario" v-model="nuevoUsuario.username" required>
+                    <br>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" v-model="nuevoUsuario.email" required>
+                    <br>
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" v-model="nuevoUsuario.phone" required>
+                    <br>
+                    <label for="website">Website:</label>
+                    <input type="text" id="website" v-model="nuevoUsuario.website" required>
+                    <br>
+                    <button type="submit">Agregar Usuario</button>
+                </form>
+            </div>
+
+
+
+        </div>
+    </div>
 
     
-]
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                email: '',
+                password: '',
+                isLoggedIn: false,
+                mostrar: false,
+                usuarios: [],
+                mostrarFormulario: false,
+                nuevoUsuario: {
+                    name: '',
+                    username: '',
+                    email: '',
+                    phone: '',
+                    website: ''
+                },
+
+                mostrarFormularioEditar: false,
+                usuarioEditado: {
+                    id: null,
+                    name: '',
+                    username: '',
+                    email: '',
+                    phone: '',
+                    website: ''
+                }
+
+
+            },
+            methods: {
+                login() {
+                    // Autenticación del email y la contraseña
+                    const userEmail = this.email;
+                    const userPassword = this.password;
+
+                    fetch('users.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            const user = data.find(user => user.email === userEmail && user.password === userPassword);
+                            if (user) {
+                                this.isLoggedIn = true;
+                                this.email = '';
+                                this.password = '';
+                            } else {
+                                alert('inténtelo de nuevo.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar los usuarios: ', error);
+                        });
+                },
+                mostrarUsuarios() {
+                    // recarga la tabla de los usuarios
+                    fetch('users.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.usuarios = data;
+                            this.mostrar = true;
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar los usuarios: ', error);
+                        });
+                },
+
+
+                borrarUsuario(user) {
+                    const confirmacion = confirm(`¿Borrar a  ${user.name}?`);
+                    if (confirmacion) {
+                        // Elimina el usuario del arreglo de llamado usuarios
+                        const index = this.usuarios.indexOf(user);
+                        if (index !== -1) {
+                            this.usuarios.splice(index, 1);
+                        }
+                    }
+                },
+
+                mostrarFormularioAgregar() {
+                    this.mostrarFormulario = true;
+                },
+
+                agregarUsuario() {
+                    // añade el nuevo usuario creado
+                    this.usuarios.push(this.nuevoUsuario);
+
+                    // clear formulario
+                    this.nuevoUsuario = {
+                        name: '',
+                        username: '',
+                        email: '',
+                        phone: '',
+                        website: ''
+                    };
+                },
+
+                editarUsuario(user) {
+                    // muestra el nuevo formulario con los datos editados
+                    this.usuarioEditado = { ...user };
+                    this.mostrarFormularioEditar = true;
+                },
+
+
+
+                guardarEdicion() {
+                    // actualiza el usuario en la lista
+                    const index = this.usuarios.findIndex(user => user.id === this.usuarioEditado.id);
+                    if (index !== -1) {
+                        this.usuarios[index] = { ...this.usuarioEditado };
+                        this.mostrarFormularioEditar = false;
+                    }
+                }
+
+
+                
+            }
+        });
+    </script>
+</body>
+</html>
